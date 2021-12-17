@@ -7,6 +7,19 @@ import ScreenshotViewerBar from './screenshot-viewer-bar.component';
 import ScreenshotViewerEditPoint from './screenshot-viewer-edit-point.component';
 import ScreenshotContext, { ScreenshotContextType } from './screenshot.context';
 
+const pointers = [
+  'top',
+  'top-right',
+  'right',
+  'right-bottom',
+  'bottom',
+  'bottom-left',
+  'left',
+  'left-top',
+] as const;
+
+type actionType = typeof pointers[number] | 'move';
+
 export default class ScreenshotViewer extends PureComponent<
   ScreenshotContextType & {
     onChange: (data: {
@@ -26,7 +39,7 @@ export default class ScreenshotViewer extends PureComponent<
   /**
    * move 和 resize 的標誌
    */
-  actionType?: string;
+  actionType?: actionType;
 
   /**
    * 鼠標起始位置
@@ -79,16 +92,6 @@ export default class ScreenshotViewer extends PureComponent<
   }
 
   get pointers() {
-    const pointers = [
-      'top',
-      'top-right',
-      'right',
-      'right-bottom',
-      'bottom',
-      'bottom-left',
-      'left',
-      'left-top',
-    ];
     const { action } = this.props;
     return action ? [] : pointers;
   }
@@ -167,8 +170,9 @@ export default class ScreenshotViewer extends PureComponent<
     stack!.forEach((item) => item.draw(this.ctx, item.history[0], item)); // action draw
   };
 
-  onMousedown = (e: React.MouseEvent, type: string) => {
+  onMousedown = (e: React.MouseEvent, type: actionType) => {
     const { viewer, action, actions } = this.props;
+
     if (!viewer) return;
     if (!action) {
       if (!type || e.button !== 0) return;
@@ -266,6 +270,7 @@ export default class ScreenshotViewer extends PureComponent<
 
   onDblClick = (e: React.MouseEvent) => {
     const { actions } = this.props;
+
     if (
       e.target === e.currentTarget &&
       e.button === 0 &&
@@ -412,7 +417,7 @@ export default class ScreenshotViewer extends PureComponent<
         style={{
           display: viewer ? 'block' : 'none',
         }}
-        onMouseUp={this.onRightClick}
+        onMouseUp={($event) => this.onRightClick($event)}
         onDoubleClick={($event) => this.onDblClick($event)}
       >
         <div

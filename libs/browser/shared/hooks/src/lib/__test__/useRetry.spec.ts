@@ -1,12 +1,12 @@
-import { waitForRenderReady } from './../../../../../../test/src/lib/wait-for-render-ready';
-import { EachRun } from '@procyonidae/test';
+import { EachRun, waitForRenderReady } from '@procyonidae/test';
 import {
   act,
   renderHook,
   RenderHookResult,
   RenderResult,
 } from '@testing-library/react-hooks';
-import { useRetry, UseRetryOptions } from './../useRetry/useRetry';
+
+import { useRetry, UseRetryOptions } from '../useRetry/useRetry';
 
 describe('useRetry', () => {
   beforeAll(() => {
