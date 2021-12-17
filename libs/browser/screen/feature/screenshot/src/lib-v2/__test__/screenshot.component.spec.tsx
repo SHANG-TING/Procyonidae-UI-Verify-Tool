@@ -595,7 +595,11 @@ describe('ScreenshotViewer', () => {
     //#endregion
   });
 
-  // describe('when the viewer is resized by dragging the pointer of the border', () => {
+  it('Move the viewer by dragging the border', () => {});
 
-  // });
+  it('Move the viewer to the outside of the screen by dragging the border', () => {});
+
+  it('Resize the viewer by dragging the pointer of the border', () => {});
+
+  it('Resize the viewer to the outside of the screen by dragging the pointer of the border', () => {});
 });
