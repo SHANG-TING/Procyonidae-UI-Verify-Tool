@@ -5,6 +5,7 @@ import { fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import dpr from '../../../dpr';
+import Ellipse from '../actions/ellipse';
 import Screenshot from '../screenshot.component';
 
 const EMPTY_IMAGE = {
@@ -244,21 +245,10 @@ describe('ScreenshotMagnifier', () => {
 });
 
 describe('ScreenshotViewer', () => {
+  let getBoundingClientRectSpy: jest.SpyInstance<DOMRect, any>;
+
   beforeEach(() => {
     jest.spyOn(global.Image.prototype, 'src', 'set').mockImplementation(setSrc);
-
-    jest
-      .spyOn(global.Element.prototype, 'getBoundingClientRect')
-      .mockReturnValue({
-        x: 0,
-        y: 0,
-        width: 1920,
-        height: 1080,
-        top: 0,
-        right: 1920,
-        bottom: 1080,
-        left: 0,
-      } as DOMRect);
 
     jest.spyOn(global.CanvasRenderingContext2D.prototype, 'clearRect');
 
@@ -267,13 +257,26 @@ describe('ScreenshotViewer', () => {
       .mockReturnValue({
         data: [0, 0, 0],
       } as any);
+
+    getBoundingClientRectSpy = jest
+      .spyOn(global.HTMLCanvasElement.prototype, 'getBoundingClientRect')
+      .mockReturnValue({
+        x: 100,
+        y: 100,
+        width: 1920,
+        height: 1080,
+        top: 100,
+        right: 1920,
+        bottom: 1080,
+        left: 100,
+      } as DOMRect);
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should render screenshot-viewer', async () => {
+  it.skip('should render screenshot-viewer', async () => {
     const { container } = render(
       <Screenshot
         image={SUCCESS_IMAGE.src}
@@ -602,4 +605,82 @@ describe('ScreenshotViewer', () => {
   it('Resize the viewer by dragging the pointer of the border', () => {});
 
   it('Resize the viewer to the outside of the screen by dragging the pointer of the border', () => {});
+
+  it.only('drawing a ellipse', async () => {
+    const { container, getByTitle } = render(
+      <Screenshot
+        image={SUCCESS_IMAGE.src}
+        width={SUCCESS_IMAGE.width}
+        height={SUCCESS_IMAGE.height}
+      />,
+    );
+
+    const canvas = container.querySelector('.screenshot-canvas');
+    const viewer = container.querySelector('.screenshot-viewer');
+    const viewerBorder = container.querySelector('.screenshot-viewer-border');
+    const viewerBar = container.querySelector('.screenshot-viewer-bar');
+    const viewerBody = container.querySelector('.screenshot-viewer-body');
+
+    await waitForRenderReady();
+
+    act(() => {
+      fireEvent.mouseMove(document, { clientX: 0, clientY: 0 });
+      fireEvent.mouseDown(canvas!, {
+        button: 0,
+        clientX: 100,
+        clientY: 100,
+      });
+      fireEvent.mouseMove(document, { clientX: 150, clientY: 150 });
+      fireEvent.mouseUp(document, { clientX: 200, clientY: 200 });
+    });
+
+    expect(viewer!.getAttribute('style')).toBe('display: block;');
+
+    const barButton = getByTitle('圓形');
+
+    barButton.click();
+
+    expect(
+      barButton.classList.contains('screenshot-viewer-bar-button-active'),
+    ).toBe(true);
+
+    // jest.spyOn(global.CanvasRenderingContext2D.prototype, 'isPointInStroke')
+
+    const ellipseDrawSpy = jest.spyOn(Ellipse.prototype, 'draw');
+    const ellipseMousedownSpy = jest.spyOn(Ellipse.prototype, 'mousedown');
+
+    getBoundingClientRectSpy.mockReturnValue({
+      left: 100,
+      top: 100,
+    } as DOMRect);
+
+    expect(getBoundingClientRectSpy).toBeCalledTimes(0);
+
+    act(() => {
+      fireEvent.mouseDown(viewerBorder!, {
+        clientX: 120,
+        clientY: 120,
+      });
+    });
+
+    expect(ellipseMousedownSpy).toBeCalledTimes(1);
+    expect(getBoundingClientRectSpy).toBeCalledTimes(2);
+
+    act(() => {
+      fireEvent.mouseMove(document, {
+        clientX: 140,
+        clientY: 140,
+      });
+    });
+
+    expect(ellipseDrawSpy).toBeCalledTimes(1);
+    expect(getBoundingClientRectSpy).toBeCalledTimes(4);
+
+    act(() => {
+      fireEvent.mouseUp(document, {
+        clientX: 160,
+        clientY: 160,
+      });
+    });
+  });
 });

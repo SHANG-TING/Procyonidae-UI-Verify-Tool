@@ -167,7 +167,10 @@ export default class ScreenshotViewer extends PureComponent<
       this.ctx.drawImage(image.el, x * rx, y * ry, w * rx, h * ry, 0, 0, w, h);
     }
 
-    stack!.forEach((item) => item.draw(this.ctx, item.history[0], item)); // action draw
+    for (const item of stack!) {
+      // action draw
+      item.draw(this.ctx, item.history[0], item);
+    }
   };
 
   onMousedown = (e: React.MouseEvent, type: actionType) => {
@@ -293,7 +296,7 @@ export default class ScreenshotViewer extends PureComponent<
       const recent = t.history[0];
 
       if (['rect', 'ellipse', 'brush'].includes(t.type)) {
-        if (this.ctx.isPointInStroke(recent.path, x, y)) {
+        if (this.ctx.isPointInStroke(recent.path!, x, y)) {
           action = recent;
           type = t.type;
           index = i;
@@ -303,8 +306,8 @@ export default class ScreenshotViewer extends PureComponent<
 
       if (['arrow'].includes(t.type)) {
         if (
-          this.ctx.isPointInStroke(recent.path, x, y) ||
-          this.ctx.isPointInPath(recent.path, x, y)
+          this.ctx.isPointInStroke(recent.path!, x, y) ||
+          this.ctx.isPointInPath(recent.path!, x, y)
         ) {
           action = recent;
           type = t.type;
@@ -315,10 +318,10 @@ export default class ScreenshotViewer extends PureComponent<
 
       if (t.type === 'text') {
         const textRect = recent.domClientRect;
-        const textX = textRect.left - left;
-        const textY = textRect.top - top;
-        const assertX = x >= textX && x <= textX + textRect.width;
-        const assertY = y >= textY && y <= textY + textRect.height;
+        const textX = textRect!.left - left;
+        const textY = textRect!.top - top;
+        const assertX = x >= textX && x <= textX + textRect!.width;
+        const assertY = y >= textY && y <= textY + textRect!.height;
         if (assertX && assertY) {
           action = recent;
           type = t.type;
@@ -398,7 +401,7 @@ export default class ScreenshotViewer extends PureComponent<
       lastAction &&
       Action.prototype !== Object.getPrototypeOf(lastAction)
     ) {
-      lastAction.beforeUnMount && lastAction.beforeUnMount();
+      lastAction.beforeUnMount?.();
     }
     const nextAction = new Action(this.actionArgs);
     const action = Object.keys(nextAction).length ? nextAction : null;

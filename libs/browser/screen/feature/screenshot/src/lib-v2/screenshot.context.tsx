@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { IHistory } from './interfaces';
+
 interface ScreenshotContextType {
   image?: { el?: CanvasImageSource; width: number; height: number };
   viewer?: {
@@ -26,7 +28,7 @@ interface ScreenshotContextType {
   }>;
   stack?: Array<{
     draw: (...args: any[]) => void;
-    history: any[];
+    history: Array<IHistory>;
     type: string;
   }>;
   state?: Record<string, any>;

@@ -16,7 +16,7 @@ export default class Action implements IAction {
 
   beforeUnMount(): void {}
 
-  mousedown = (e: MouseEvent, actionProps: IActionProps) => {};
+  mousedown(e: MouseEvent, actionProps: IActionProps) {}
 
   mousemove = (
     e: MouseEvent,
@@ -39,7 +39,7 @@ export default class Action implements IAction {
   setUndoPriority(context: Pick<ScreenshotContextType, 'stack'>): number {
     return (
       Math.max.apply(null, [
-        ...context.stack!.map((t) => t.history[0].undoPriority),
+        ...context.stack!.map((t) => t.history[0].undoPriority!),
         0,
       ]) + 1
     );

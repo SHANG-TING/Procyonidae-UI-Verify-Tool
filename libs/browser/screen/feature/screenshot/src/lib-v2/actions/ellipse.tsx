@@ -1,6 +1,7 @@
 import React from 'react';
 
 import SizeColor from '../common/screenshot-size-color.component';
+import { IActionProps, IHistory } from '../interfaces';
 import Action from './action';
 
 export default class Ellipse extends Action {
@@ -173,7 +174,10 @@ export default class Ellipse extends Action {
     this.props.setContext({ editPointers: [] });
   }
 
-  mousedown = (e: any, { el, ctx, context, setContext }: any) => {
+  mousedown(
+    e: MouseEvent,
+    { el, ctx, context, setContext }: IActionProps,
+  ): void {
     const { left, top } = el.getBoundingClientRect();
     const { border, color } = context;
     const x = e.clientX - left;
@@ -203,7 +207,7 @@ export default class Ellipse extends Action {
       };
     } else {
       this.isEdit = true;
-      this.ellipse = context.stack[this.inStroke.index];
+      this.ellipse = context!.stack![this.inStroke.index];
       this.setEditPointers(this.ellipse.history[0]);
       this.onSizeChange(this.ellipse.history[0].size);
       this.onColorChange(this.ellipse.history[0].color);
@@ -227,7 +231,7 @@ export default class Ellipse extends Action {
         this.drag.point = { x, y };
       }
     }
-  };
+  }
 
   mousemove = (
     e: any,
@@ -361,30 +365,36 @@ export default class Ellipse extends Action {
     }
   };
 
-  draw(ctx: CanvasRenderingContext2D, action: any) {
-    let { size, color, x1, x2, y1, y2 } = action;
+  draw(ctx: CanvasRenderingContext2D, history: IHistory) {
+    let { size, color, x1, x2, y1, y2 } = history;
+
     ctx.lineCap = 'butt';
     ctx.lineJoin = 'round';
     ctx.lineWidth = size;
     ctx.strokeStyle = color;
+
     if (x1 > x2) {
       const x = x1;
       x1 = x2;
       x2 = x;
     }
+
     if (y1 > y2) {
       const y = y1;
       y1 = y2;
       y2 = y;
     }
+
     const x = (x1 + x2) / 2;
     const y = (y1 + y2) / 2;
     const a = (x2 - x1) / 2;
     const b = (y2 - y1) / 2;
+
     const path = new Path2D();
     path.ellipse(x, y, a, b, 0, 0, 2 * Math.PI);
     ctx.stroke(path);
-    action.path = path;
+
+    history.path = path;
   }
 
   setEditPointers = (record: any = undefined) => {

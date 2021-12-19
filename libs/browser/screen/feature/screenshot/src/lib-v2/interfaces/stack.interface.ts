@@ -25,10 +25,10 @@ export interface IHistory {
   size: number;
   tiles?: ITile[];
   undoPriority?: number;
-  x1?: number;
-  y1?: number;
-  x2?: number;
-  y2?: number;
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
   path?: Path2D;
   /**
    * Record dragging point trajectory for actions/brush.tsx
@@ -41,7 +41,7 @@ export interface IHistory {
   /**
    * Record dom.getBoundingClientRect() of RenderTextarea for actions/text.tsx
    */
-  domClientRect?: { x: number; y: number; width: number; height: number };
+  domClientRect?: DOMRect;
 }
 
 export interface ITile {
