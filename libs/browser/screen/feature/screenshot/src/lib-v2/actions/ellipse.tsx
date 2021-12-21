@@ -4,6 +4,13 @@ import SizeColor from '../common/screenshot-size-color.component';
 import { IActionProps, IHistory } from '../interfaces';
 import Action from './action';
 
+type EllipseType = {
+  type: string;
+  history: IHistory[];
+  draw: (ctx: CanvasRenderingContext2D, history: IHistory) => void;
+  ready?: boolean;
+};
+
 export default class Ellipse extends Action {
   static title = '圓形';
 
@@ -11,7 +18,8 @@ export default class Ellipse extends Action {
 
   static icon = 'screenshot-icon-ellipse';
 
-  ellipse: any = null;
+  ellipse: EllipseType | null = null;
+
   isNew = false;
   isEdit = false;
   todo: any = null;
@@ -193,8 +201,8 @@ export default class Ellipse extends Action {
         type: 'ellipse',
         history: [
           {
-            size: border,
-            color,
+            size: border!,
+            color: color!,
             x1: x,
             y1: y,
             x2: x,
@@ -208,16 +216,16 @@ export default class Ellipse extends Action {
     } else {
       this.isEdit = true;
       this.ellipse = context!.stack![this.inStroke.index];
-      this.setEditPointers(this.ellipse.history[0]);
-      this.onSizeChange(this.ellipse.history[0].size);
-      this.onColorChange(this.ellipse.history[0].color);
+      this.setEditPointers(this.ellipse!.history[0]);
+      this.onSizeChange(this.ellipse!.history[0].size);
+      this.onColorChange(this.ellipse!.history[0].color);
 
       const record = {
-        ...this.ellipse.history[0],
+        ...this.ellipse!.history[0],
         path: new Path2D(),
         ready: true,
       };
-      this.ellipse.history.unshift(record);
+      this.ellipse!.history.unshift(record);
 
       // resize準備
       if (this.todo === 'resize') {
@@ -243,9 +251,9 @@ export default class Ellipse extends Action {
     let y = e.clientY - top;
 
     if (this.isNew) {
-      if (this.ellipse.ready) {
-        delete this.ellipse.ready;
-        this.ellipse.history[0].undoPriority = this.setUndoPriority(context);
+      if (this.ellipse!.ready) {
+        delete this.ellipse!.ready;
+        this.ellipse!.history[0].undoPriority = this.setUndoPriority(context);
         context.stack.push(this.ellipse);
       }
 
@@ -253,7 +261,7 @@ export default class Ellipse extends Action {
       if (y < 0) y = 0;
       if (x > width) x = width;
       if (y > height) y = height;
-      const recent = this.ellipse.history[0];
+      const recent = this.ellipse!.history[0];
       recent.x2 = x;
       recent.y2 = y;
 
@@ -263,8 +271,8 @@ export default class Ellipse extends Action {
 
       if (this.drag.isDown) {
         // 拖曳畫圖
-        const last = this.ellipse.history[1];
-        const now = this.ellipse.history[0];
+        const last = this.ellipse!.history[1];
+        const now = this.ellipse!.history[0];
         delete now.ready; // 使用紀錄
         const translateX = x - this.drag.point.x;
         const translateY = y - this.drag.point.y;
@@ -278,7 +286,7 @@ export default class Ellipse extends Action {
 
       if (this.resize.isDown) {
         // resize畫圖
-        const now = this.ellipse.history[0];
+        const now = this.ellipse!.history[0];
         delete now.ready; // 使用紀錄
         const flip = this.EditPointersFlip[this.resize.name];
         const resize = this.EditPointersResize[this.resize.name];
@@ -348,10 +356,10 @@ export default class Ellipse extends Action {
     } else {
       // 路徑操作的取消
       if (this.todo) {
-        if (this.ellipse.history[0].ready) {
-          this.ellipse.history.shift();
+        if (this.ellipse!.history[0].ready) {
+          this.ellipse!.history.shift();
         }
-        this.ellipse.history[0].undoPriority = this.setUndoPriority(context);
+        this.ellipse!.history[0].undoPriority = this.setUndoPriority(context);
 
         if (this.resize.isDown) {
           this.resize.isDown = false;
@@ -511,17 +519,23 @@ export default class Ellipse extends Action {
     this.sizeColorEdit('color', color);
   };
 
-  sizeColorEdit = (type: any, value: any) => {
+  sizeColorEdit = <TKey extends keyof IHistory>(
+    type: TKey,
+    value: IHistory[TKey],
+  ) => {
     if (this.isEdit) {
       const { context } = this.props;
-      if (this.ellipse.history[0][type] === value) return;
+
+      if (this.ellipse!.history[0][type] === value) return;
+
       const record = {
-        ...this.ellipse.history[0],
+        ...this.ellipse!.history[0],
         path: new Path2D(),
         undoPriority: this.setUndoPriority(context),
-      };
+      } as IHistory;
+
       record[type] = value;
-      this.ellipse.history.unshift(record);
+      this.ellipse!.history.unshift(record);
       this.setEditPointers(record);
     }
   };

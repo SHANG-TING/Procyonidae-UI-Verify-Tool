@@ -652,6 +652,8 @@ describe('ScreenshotViewer', () => {
     getBoundingClientRectSpy.mockReturnValue({
       left: 100,
       top: 100,
+      width: 100,
+      height: 100,
     } as DOMRect);
 
     expect(getBoundingClientRectSpy).toBeCalledTimes(0);
@@ -677,10 +679,9 @@ describe('ScreenshotViewer', () => {
     expect(getBoundingClientRectSpy).toBeCalledTimes(4);
 
     act(() => {
-      fireEvent.mouseUp(document, {
-        clientX: 160,
-        clientY: 160,
-      });
+      fireEvent.mouseUp(document);
     });
+
+    viewerBody?.scrollWidth; //?
   });
 });
