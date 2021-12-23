@@ -41,58 +41,22 @@ export default class Ellipse extends Action {
 
   get EditPointersResize(): any {
     return {
-      top: (
-        x: number,
-        y: number,
-        x1: number,
-        y1: number,
-        x2: number,
-        y2: number,
-      ) => ({ x1, y1: y, x2, y2 }),
-      'top-left': (
-        x: number,
-        y: number,
-        x1: number,
-        y1: number,
-        x2: number,
-        y2: number,
-        xp: number,
-        yp: number,
-      ) => ({ x1: x1 + x - xp, y1: y1 + y - yp, x2, y2 }),
-      'top-right': (
-        x: number,
-        y: number,
-        x1: number,
-        y1: number,
-        x2: number,
-        y2: number,
-        xp: number,
-        yp: number,
-      ) => ({ x1, y1: y1 + y - yp, x2: x2 + x - xp, y2 }),
-      left: (
-        x: number,
-        y: number,
-        x1: number,
-        y1: number,
-        x2: number,
-        y2: number,
-      ) => ({ x1: x, y1, x2, y2 }),
-      right: (
-        x: number,
-        y: number,
-        x1: number,
-        y1: number,
-        x2: number,
-        y2: number,
-      ) => ({ x1, y1, x2: x, y2 }),
-      bottom: (
-        x: number,
-        y: number,
-        x1: number,
-        y1: number,
-        x2: number,
-        y2: number,
-      ) => ({ x1, y1, x2, y2: y }),
+      top: (x: number, y: number, x1: number, y1: number, x2: number, y2: number) => ({ x1, y1: y, x2, y2 }),
+      'top-left': (x: number, y: number, x1: number, y1: number, x2: number, y2: number, xp: number, yp: number) => ({
+        x1: x1 + x - xp,
+        y1: y1 + y - yp,
+        x2,
+        y2,
+      }),
+      'top-right': (x: number, y: number, x1: number, y1: number, x2: number, y2: number, xp: number, yp: number) => ({
+        x1,
+        y1: y1 + y - yp,
+        x2: x2 + x - xp,
+        y2,
+      }),
+      left: (x: number, y: number, x1: number, y1: number, x2: number, y2: number) => ({ x1: x, y1, x2, y2 }),
+      right: (x: number, y: number, x1: number, y1: number, x2: number, y2: number) => ({ x1, y1, x2: x, y2 }),
+      bottom: (x: number, y: number, x1: number, y1: number, x2: number, y2: number) => ({ x1, y1, x2, y2: y }),
       'bottom-left': (
         x: number,
         y: number,
@@ -118,55 +82,23 @@ export default class Ellipse extends Action {
 
   get EditPointersFlip(): any {
     return {
-      'top-left': (
-        x: number,
-        y: number,
-        x1: number,
-        y1: number,
-        x2: number,
-        y2: number,
-      ): any => {
-        if (x >= x2 && y >= y2)
-          return { name: 'bottom-right', cursor: 'nwse-resize' };
+      'top-left': (x: number, y: number, x1: number, y1: number, x2: number, y2: number): any => {
+        if (x >= x2 && y >= y2) return { name: 'bottom-right', cursor: 'nwse-resize' };
         if (x >= x2) return { name: 'top-right', cursor: 'nesw-resize' };
         if (y >= y2) return { name: 'bottom-left', cursor: 'nesw-resize' };
       },
-      'top-right': (
-        x: number,
-        y: number,
-        x1: number,
-        y1: number,
-        x2: number,
-        y2: number,
-      ): any => {
-        if (x <= x1 && y >= y2)
-          return { name: 'bottom-left', cursor: 'nesw-resize' };
+      'top-right': (x: number, y: number, x1: number, y1: number, x2: number, y2: number): any => {
+        if (x <= x1 && y >= y2) return { name: 'bottom-left', cursor: 'nesw-resize' };
         if (x <= x1) return { name: 'top-left', cursor: 'nwse-resize' };
         if (y >= y2) return { name: 'bottom-right', cursor: 'nwse-resize' };
       },
-      'bottom-left': (
-        x: number,
-        y: number,
-        x1: number,
-        y1: number,
-        x2: number,
-        y2: number,
-      ): any => {
-        if (x >= x2 && y <= y1)
-          return { name: 'top-right', cursor: 'nesw-resize' };
+      'bottom-left': (x: number, y: number, x1: number, y1: number, x2: number, y2: number): any => {
+        if (x >= x2 && y <= y1) return { name: 'top-right', cursor: 'nesw-resize' };
         if (x >= x2) return { name: 'bottom-right', cursor: 'nwse-resize' };
         if (y <= y1) return { name: 'top-left', cursor: 'nwse-resize' };
       },
-      'bottom-right': (
-        x: number,
-        y: number,
-        x1: number,
-        y1: number,
-        x2: number,
-        y2: number,
-      ): any => {
-        if (x <= x1 && y <= y1)
-          return { name: 'top-left', cursor: 'nwse-resize' };
+      'bottom-right': (x: number, y: number, x1: number, y1: number, x2: number, y2: number): any => {
+        if (x <= x1 && y <= y1) return { name: 'top-left', cursor: 'nwse-resize' };
         if (x <= x1) return { name: 'bottom-left', cursor: 'nesw-resize' };
         if (y <= y1) return { name: 'top-right', cursor: 'nesw-resize' };
       },
@@ -182,10 +114,7 @@ export default class Ellipse extends Action {
     this.props.setContext({ editPointers: [] });
   }
 
-  mousedown(
-    e: MouseEvent,
-    { el, ctx, context, setContext }: IActionProps,
-  ): void {
+  mousedown(e: MouseEvent, { el, ctx, context, setContext }: IActionProps): void {
     const { left, top } = el.getBoundingClientRect();
     const { border, color } = context;
     const x = e.clientX - left;
@@ -241,11 +170,7 @@ export default class Ellipse extends Action {
     }
   }
 
-  mousemove = (
-    e: any,
-    { el, ctx, context, setContext }: any,
-    pointInStroke: any,
-  ) => {
+  mousemove = (e: any, { el, ctx, context, setContext }: any, pointInStroke: any) => {
     const { left, top, width, height } = el.getBoundingClientRect();
     let x = e.clientX - left;
     let y = e.clientY - top;
@@ -290,9 +215,7 @@ export default class Ellipse extends Action {
         delete now.ready; // 使用紀錄
         const flip = this.EditPointersFlip[this.resize.name];
         const resize = this.EditPointersResize[this.resize.name];
-        const pointer = context.editPointers.find(
-          (t: any) => t.name === this.resize.name,
-        );
+        const pointer = context.editPointers.find((t: any) => t.name === this.resize.name);
         if (flip) {
           const newPoint = flip(x, y, now.x1, now.y1, now.x2, now.y2);
           if (newPoint) {
@@ -301,16 +224,7 @@ export default class Ellipse extends Action {
             setContext({ cursor });
           }
         }
-        const { x1, y1, x2, y2 } = resize(
-          x,
-          y,
-          now.x1,
-          now.y1,
-          now.x2,
-          now.y2,
-          pointer.x,
-          pointer.y,
-        );
+        const { x1, y1, x2, y2 } = resize(x, y, now.x1, now.y1, now.x2, now.y2, pointer.x, pointer.y);
         now.x1 = x1;
         now.y1 = y1;
         now.x2 = x2;
@@ -331,6 +245,7 @@ export default class Ellipse extends Action {
             const assertY = y >= t.y - t.size && y <= t.y + t.size;
             return assertX && assertY;
           });
+
           if (hit) {
             this.todo = 'resize';
             setContext({ cursor: hit.cursor });
@@ -338,6 +253,7 @@ export default class Ellipse extends Action {
             return;
           }
         }
+
         this.todo = 'drag';
         setContext({ cursor: 'grab' });
       } else {
@@ -424,8 +340,7 @@ export default class Ellipse extends Action {
       const radiusRate = Math.abs(radius.x / radius.y);
       // 椭圆方程式(x²/a²)+(y²/b²)=1，a,b為長短半軸
       const obliqueY = Math.sqrt(
-        Math.pow(radius.x * radius.y, 2) /
-          (Math.pow(radius.x, 2) + Math.pow(radius.y * radiusRate, 2)),
+        Math.pow(radius.x * radius.y, 2) / (Math.pow(radius.x, 2) + Math.pow(radius.y * radiusRate, 2)),
       );
       const oblique = {
         x: obliqueY * radiusRate,
@@ -519,10 +434,7 @@ export default class Ellipse extends Action {
     this.sizeColorEdit('color', color);
   };
 
-  sizeColorEdit = <TKey extends keyof IHistory>(
-    type: TKey,
-    value: IHistory[TKey],
-  ) => {
+  sizeColorEdit = <TKey extends keyof IHistory>(type: TKey, value: IHistory[TKey]) => {
     if (this.isEdit) {
       const { context } = this.props;
 
@@ -543,12 +455,7 @@ export default class Ellipse extends Action {
   render() {
     const { border, color } = this.props.context;
     return (
-      <SizeColor
-        size={border!}
-        color={color!}
-        onSizeChange={this.onSizeChange}
-        onColorChange={this.onColorChange}
-      />
+      <SizeColor size={border!} color={color!} onSizeChange={this.onSizeChange} onColorChange={this.onColorChange} />
     );
   }
 }

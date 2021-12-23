@@ -7,27 +7,13 @@ import ScreenshotViewerBar from './screenshot-viewer-bar.component';
 import ScreenshotViewerEditPoint from './screenshot-viewer-edit-point.component';
 import ScreenshotContext, { ScreenshotContextType } from './screenshot.context';
 
-const pointers = [
-  'top',
-  'top-right',
-  'right',
-  'right-bottom',
-  'bottom',
-  'bottom-left',
-  'left',
-  'left-top',
-] as const;
+const pointers = ['top', 'top-right', 'right', 'right-bottom', 'bottom', 'bottom-left', 'left', 'left-top'] as const;
 
 type actionType = typeof pointers[number] | 'move';
 
 export default class ScreenshotViewer extends PureComponent<
   ScreenshotContextType & {
-    onChange: (data: {
-      x1: number;
-      y1: number;
-      x2: number;
-      y2: number;
-    }) => void;
+    onChange: (data: { x1: number; y1: number; x2: number; y2: number }) => void;
     onEmit: (event: string, ...args: any[]) => void;
   }
 > {
@@ -97,20 +83,8 @@ export default class ScreenshotViewer extends PureComponent<
   }
 
   get actionArgs() {
-    const {
-      image,
-      viewer,
-      width,
-      height,
-      stack,
-      action,
-      actions,
-      border,
-      font,
-      color,
-      cursor,
-      editPointers,
-    } = this.props;
+    const { image, viewer, width, height, stack, action, actions, border, font, color, cursor, editPointers } =
+      this.props;
     return {
       viewer: this.viewerRef.current,
       el: this.canvasRef.current,
@@ -147,6 +121,7 @@ export default class ScreenshotViewer extends PureComponent<
   }
 
   componentDidUpdate() {
+    console.log('componentDidUpdate');
     this.draw();
   }
 
@@ -169,6 +144,7 @@ export default class ScreenshotViewer extends PureComponent<
 
     for (const item of stack!) {
       // action draw
+      console.log('action draw');
       item.draw(this.ctx, item.history[0], item);
     }
   };
@@ -196,14 +172,9 @@ export default class ScreenshotViewer extends PureComponent<
       }
     } else {
       const current = this.handlePointInRecord(e);
-      if (
-        current.type &&
-        current.type !== Object.getPrototypeOf(action).constructor.type
-      ) {
+      if (current.type && current.type !== Object.getPrototypeOf(action).constructor.type) {
         // 根據路徑更改 action
-        const Action = actions!.find(
-          (item) => item.key.type === current.type,
-        )?.key;
+        const Action = actions!.find((item) => item.key.type === current.type)?.key;
         const nextAction = this.onAction(Action);
 
         // 模擬新 action 操作
@@ -261,11 +232,7 @@ export default class ScreenshotViewer extends PureComponent<
 
   onRightClick = (e: React.MouseEvent) => {
     const { actions } = this.props;
-    if (
-      e.target === e.currentTarget &&
-      e.button === 2 &&
-      actions!.some(({ key }) => key === Cancel)
-    ) {
+    if (e.target === e.currentTarget && e.button === 2 && actions!.some(({ key }) => key === Cancel)) {
       e.preventDefault();
       this.onAction(Cancel);
     }
@@ -274,16 +241,12 @@ export default class ScreenshotViewer extends PureComponent<
   onDblClick = (e: React.MouseEvent) => {
     const { actions } = this.props;
 
-    if (
-      e.target === e.currentTarget &&
-      e.button === 0 &&
-      actions!.some(({ key }) => key === Ok)
-    ) {
+    if (e.target === e.currentTarget && e.button === 0 && actions!.some(({ key }) => key === Ok)) {
       this.onAction(Ok);
     }
   };
 
-  handlePointInRecord = (e: React.MouseEvent | MouseEvent) => {
+  private handlePointInRecord = (e: React.MouseEvent | MouseEvent) => {
     const { left, top } = this.canvasRef.current!.getBoundingClientRect();
     const x = (e.clientX - left) * dpr;
     const y = (e.clientY - top) * dpr;
@@ -305,10 +268,7 @@ export default class ScreenshotViewer extends PureComponent<
       }
 
       if (['arrow'].includes(t.type)) {
-        if (
-          this.ctx.isPointInStroke(recent.path!, x, y) ||
-          this.ctx.isPointInPath(recent.path!, x, y)
-        ) {
+        if (this.ctx.isPointInStroke(recent.path!, x, y) || this.ctx.isPointInPath(recent.path!, x, y)) {
           action = recent;
           type = t.type;
           index = i;
@@ -336,7 +296,7 @@ export default class ScreenshotViewer extends PureComponent<
     return { action, index, type };
   };
 
-  move = (e: MouseEvent) => {
+  private move = (e: MouseEvent) => {
     if (!this.viewer) return;
     const x = e.clientX - this.point!.x;
     const y = e.clientY - this.point!.y;
@@ -349,7 +309,7 @@ export default class ScreenshotViewer extends PureComponent<
     });
   };
 
-  resize = (e: MouseEvent) => {
+  private resize = (e: MouseEvent) => {
     if (!this.viewer) return;
     const x = e.clientX - this.point!.x;
     const y = e.clientY - this.point!.y;
@@ -462,12 +422,7 @@ export default class ScreenshotViewer extends PureComponent<
           {action && <ScreenshotViewerEditPoint pointers={editPointers!} />}
         </div>
         <ScreenshotContext.Consumer>
-          {(context) => (
-            <ScreenshotViewerBar
-              {...context}
-              onAction={(x) => this.onAction(x)}
-            />
-          )}
+          {(context) => <ScreenshotViewerBar {...context} onAction={(x) => this.onAction(x)} />}
         </ScreenshotContext.Consumer>
       </div>
     );

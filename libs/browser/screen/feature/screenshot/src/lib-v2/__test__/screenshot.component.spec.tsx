@@ -51,68 +51,38 @@ describe('ScreenshotCanvas', () => {
 
   it('should render screenshot-canvas when `image.src` is the correct image resource', () => {
     const { container } = render(
-      <Screenshot
-        image={SUCCESS_IMAGE.src}
-        width={SUCCESS_IMAGE.width}
-        height={SUCCESS_IMAGE.height}
-      />,
+      <Screenshot image={SUCCESS_IMAGE.src} width={SUCCESS_IMAGE.width} height={SUCCESS_IMAGE.height} />,
     );
 
-    const screenshotCanvas = container.querySelector(
-      '.screenshot-canvas canvas',
-    );
+    const screenshotCanvas = container.querySelector('.screenshot-canvas canvas');
 
     expect(screenshotCanvas).not.toBeNull();
-    expect(screenshotCanvas!.getAttribute('width')).toBe(
-      (SUCCESS_IMAGE.width * dpr).toString(),
-    );
-    expect(screenshotCanvas!.getAttribute('height')).toBe(
-      (SUCCESS_IMAGE.height * dpr).toString(),
-    );
+    expect(screenshotCanvas!.getAttribute('width')).toBe((SUCCESS_IMAGE.width * dpr).toString());
+    expect(screenshotCanvas!.getAttribute('height')).toBe((SUCCESS_IMAGE.height * dpr).toString());
   });
 
   it('should render screenshot-canvas when `image.src` is not the correct image resource', () => {
     const { container } = render(
-      <Screenshot
-        image={FAILURE_IMAGE.src}
-        width={FAILURE_IMAGE.width}
-        height={FAILURE_IMAGE.height}
-      />,
+      <Screenshot image={FAILURE_IMAGE.src} width={FAILURE_IMAGE.width} height={FAILURE_IMAGE.height} />,
     );
 
-    const screenshotCanvas = container.querySelector(
-      '.screenshot-canvas canvas',
-    );
+    const screenshotCanvas = container.querySelector('.screenshot-canvas canvas');
 
     expect(screenshotCanvas).not.toBeNull();
-    expect(screenshotCanvas?.getAttribute('width')).toBe(
-      (FAILURE_IMAGE.width * dpr).toString(),
-    );
-    expect(screenshotCanvas?.getAttribute('height')).toBe(
-      (FAILURE_IMAGE.height * dpr).toString(),
-    );
+    expect(screenshotCanvas?.getAttribute('width')).toBe((FAILURE_IMAGE.width * dpr).toString());
+    expect(screenshotCanvas?.getAttribute('height')).toBe((FAILURE_IMAGE.height * dpr).toString());
   });
 
   it('should render screenshot-canvas when `image.src` is empty', () => {
     const { container } = render(
-      <Screenshot
-        image={EMPTY_IMAGE.src}
-        width={EMPTY_IMAGE.width}
-        height={EMPTY_IMAGE.height}
-      />,
+      <Screenshot image={EMPTY_IMAGE.src} width={EMPTY_IMAGE.width} height={EMPTY_IMAGE.height} />,
     );
 
-    const screenshotCanvas = container.querySelector(
-      '.screenshot-canvas canvas',
-    );
+    const screenshotCanvas = container.querySelector('.screenshot-canvas canvas');
 
     expect(screenshotCanvas).not.toBeNull();
-    expect(screenshotCanvas?.getAttribute('width')).toBe(
-      (EMPTY_IMAGE.width * dpr).toString(),
-    );
-    expect(screenshotCanvas?.getAttribute('height')).toBe(
-      (EMPTY_IMAGE.height * dpr).toString(),
-    );
+    expect(screenshotCanvas?.getAttribute('width')).toBe((EMPTY_IMAGE.width * dpr).toString());
+    expect(screenshotCanvas?.getAttribute('height')).toBe((EMPTY_IMAGE.height * dpr).toString());
   });
 });
 
@@ -124,29 +94,22 @@ describe('ScreenshotMagnifier', () => {
   beforeEach(() => {
     jest.spyOn(global.Image.prototype, 'src', 'set').mockImplementation(setSrc);
 
-    getBoundingClientRectSpy = jest
-      .spyOn(global.Element.prototype, 'getBoundingClientRect')
-      .mockReturnValue({
-        x: 0,
-        y: 0,
-        width: 1920,
-        height: 1080,
-        top: 0,
-        right: 1920,
-        bottom: 1080,
-        left: 0,
-      } as DOMRect);
+    getBoundingClientRectSpy = jest.spyOn(global.Element.prototype, 'getBoundingClientRect').mockReturnValue({
+      x: 0,
+      y: 0,
+      width: 1920,
+      height: 1080,
+      top: 0,
+      right: 1920,
+      bottom: 1080,
+      left: 0,
+    } as DOMRect);
 
-    clearRectSpy = jest.spyOn(
-      global.CanvasRenderingContext2D.prototype,
-      'clearRect',
-    );
+    clearRectSpy = jest.spyOn(global.CanvasRenderingContext2D.prototype, 'clearRect');
 
-    getImageDataSpy = jest
-      .spyOn(global.CanvasRenderingContext2D.prototype, 'getImageData')
-      .mockReturnValue({
-        data: [0, 0, 0],
-      } as any);
+    getImageDataSpy = jest.spyOn(global.CanvasRenderingContext2D.prototype, 'getImageData').mockReturnValue({
+      data: [0, 0, 0],
+    } as any);
   });
 
   afterEach(() => {
@@ -155,11 +118,7 @@ describe('ScreenshotMagnifier', () => {
 
   it('should render screenshot-magnifier', async () => {
     const { container } = render(
-      <Screenshot
-        image={SUCCESS_IMAGE.src}
-        width={SUCCESS_IMAGE.width}
-        height={SUCCESS_IMAGE.height}
-      />,
+      <Screenshot image={SUCCESS_IMAGE.src} width={SUCCESS_IMAGE.width} height={SUCCESS_IMAGE.height} />,
     );
     await waitForRenderReady();
 
@@ -206,9 +165,7 @@ describe('ScreenshotMagnifier', () => {
       fireEvent.mouseMove(document, { clientX: 200, clientY: 200 });
     });
 
-    expect(magnifierEl!.getAttribute('style')).toEqual(
-      'transform: translate(205px, 205px);',
-    );
+    expect(magnifierEl!.getAttribute('style')).toEqual('transform: translate(205px, 205px);');
     expect(rgbEl!.textContent).toContain('(1,1,1)');
 
     act(() => {
@@ -218,9 +175,7 @@ describe('ScreenshotMagnifier', () => {
       fireEvent.mouseMove(document, { clientX: 400, clientY: 400 });
     });
 
-    expect(magnifierEl!.getAttribute('style')).toBe(
-      'transform: translate(405px, 405px);',
-    );
+    expect(magnifierEl!.getAttribute('style')).toBe('transform: translate(405px, 405px);');
     expect(rgbEl!.textContent).toContain('(2,2,2)');
 
     act(() => {
@@ -230,9 +185,7 @@ describe('ScreenshotMagnifier', () => {
       fireEvent.mouseMove(document, { clientX: 600, clientY: 600 });
     });
 
-    expect(magnifierEl!.getAttribute('style')).toBe(
-      'transform: translate(605px, 605px);',
-    );
+    expect(magnifierEl!.getAttribute('style')).toBe('transform: translate(605px, 605px);');
     expect(rgbEl!.textContent).toContain('(3,3,3)');
 
     act(() => {
@@ -249,40 +202,30 @@ describe('ScreenshotViewer', () => {
 
   beforeEach(() => {
     jest.spyOn(global.Image.prototype, 'src', 'set').mockImplementation(setSrc);
-
     jest.spyOn(global.CanvasRenderingContext2D.prototype, 'clearRect');
+    jest.spyOn(global.CanvasRenderingContext2D.prototype, 'getImageData').mockReturnValue({
+      data: [0, 0, 0],
+    } as any);
 
-    jest
-      .spyOn(global.CanvasRenderingContext2D.prototype, 'getImageData')
-      .mockReturnValue({
-        data: [0, 0, 0],
-      } as any);
-
-    getBoundingClientRectSpy = jest
-      .spyOn(global.HTMLCanvasElement.prototype, 'getBoundingClientRect')
-      .mockReturnValue({
-        x: 100,
-        y: 100,
-        width: 1920,
-        height: 1080,
-        top: 100,
-        right: 1920,
-        bottom: 1080,
-        left: 100,
-      } as DOMRect);
+    getBoundingClientRectSpy = jest.spyOn(global.HTMLCanvasElement.prototype, 'getBoundingClientRect').mockReturnValue({
+      x: 100,
+      y: 100,
+      width: 1920,
+      height: 1080,
+      top: 100,
+      right: 1920,
+      bottom: 1080,
+      left: 100,
+    } as DOMRect);
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it.skip('should render screenshot-viewer', async () => {
+  it('should render screenshot-viewer', async () => {
     const { container } = render(
-      <Screenshot
-        image={SUCCESS_IMAGE.src}
-        width={SUCCESS_IMAGE.width}
-        height={SUCCESS_IMAGE.height}
-      />,
+      <Screenshot image={SUCCESS_IMAGE.src} width={SUCCESS_IMAGE.width} height={SUCCESS_IMAGE.height} />,
     );
     const canvas = container.querySelector('.screenshot-canvas');
     const viewer = container.querySelector('.screenshot-viewer');
@@ -359,9 +302,7 @@ describe('ScreenshotViewer', () => {
 
     expect(viewerBorder!.getAttribute('style')).toBe('cursor: grabbing;');
     expect(viewerBar!.getAttribute('style')).toContain('display: none;');
-    expect(viewerBody!.getAttribute('style')).toContain(
-      'left: 100px; top: 100px',
-    );
+    expect(viewerBody!.getAttribute('style')).toContain('left: 100px; top: 100px');
 
     //#region Moving the viewer by dragging the border of the viewer
     act(() => {
@@ -369,63 +310,49 @@ describe('ScreenshotViewer', () => {
       fireEvent.mouseMove(document, { clientX: 935, clientY: 0 });
     });
 
-    expect(viewerBody!.getAttribute('style')).toContain(
-      'left: 910px; top: 0px',
-    );
+    expect(viewerBody!.getAttribute('style')).toContain('left: 910px; top: 0px');
 
     act(() => {
       // Move the mouse to the top right corner of the viewer
       fireEvent.mouseMove(document, { clientX: 1745, clientY: 0 });
     });
 
-    expect(viewerBody!.getAttribute('style')).toContain(
-      'left: 1720px; top: 0px',
-    );
+    expect(viewerBody!.getAttribute('style')).toContain('left: 1720px; top: 0px');
 
     act(() => {
       // Move the mouse to the right corner of the viewer
       fireEvent.mouseMove(document, { clientX: 1745, clientY: 490 });
     });
 
-    expect(viewerBody!.getAttribute('style')).toContain(
-      'left: 1720px; top: 490px',
-    );
+    expect(viewerBody!.getAttribute('style')).toContain('left: 1720px; top: 490px');
 
     act(() => {
       // Move the mouse to the right bottom corner of the viewer
       fireEvent.mouseMove(document, { clientX: 1745, clientY: 980 });
     });
 
-    expect(viewerBody!.getAttribute('style')).toContain(
-      'left: 1720px; top: 980px',
-    );
+    expect(viewerBody!.getAttribute('style')).toContain('left: 1720px; top: 980px');
 
     act(() => {
       // Move the mouse to the bottom corner of the viewer
       fireEvent.mouseMove(document, { clientX: 935, clientY: 980 });
     });
 
-    expect(viewerBody!.getAttribute('style')).toContain(
-      'left: 910px; top: 980px',
-    );
+    expect(viewerBody!.getAttribute('style')).toContain('left: 910px; top: 980px');
 
     act(() => {
       // Move the mouse to the left bottom left corner of the viewer
       fireEvent.mouseMove(document, { clientX: 0, clientY: 980 });
     });
 
-    expect(viewerBody!.getAttribute('style')).toContain(
-      'left: 0px; top: 980px',
-    );
+    expect(viewerBody!.getAttribute('style')).toContain('left: 0px; top: 980px');
 
     act(() => {
       // Move the mouse to the left corner of the viewer
       fireEvent.mouseMove(document, { clientX: 0, clientY: 490 });
     });
 
-    expect(viewerBody!.getAttribute('style')).toContain(
-      'left: 0px; top: 490px',
-    );
+    expect(viewerBody!.getAttribute('style')).toContain('left: 0px; top: 490px');
 
     act(() => {
       // Move the mouse to the left top corner of the viewer
@@ -441,9 +368,7 @@ describe('ScreenshotViewer', () => {
       fireEvent.mouseUp(document, { clientX: 935, clientY: 490 });
     });
 
-    expect(viewerBody!.getAttribute('style')).toContain(
-      'left: 910px; top: 490px',
-    );
+    expect(viewerBody!.getAttribute('style')).toContain('left: 910px; top: 490px');
 
     //#region Resizing the viewer by dragging the pointer of the border
     act(() => {
@@ -459,14 +384,10 @@ describe('ScreenshotViewer', () => {
       fireEvent.mouseUp(document, { clientX: 960, clientY: 390 });
     });
 
-    expect(viewerBody!.getAttribute('style')).toContain(
-      'left: 910px; top: 440px; width: 100px; height: 150px',
-    );
+    expect(viewerBody!.getAttribute('style')).toContain('left: 910px; top: 440px; width: 100px; height: 150px');
 
     act(() => {
-      const pointer = container.querySelector(
-        '.screenshot-viewer-pointer-top-right',
-      );
+      const pointer = container.querySelector('.screenshot-viewer-pointer-top-right');
 
       // Drag pointer and move it 100px to the top right corner of the viewer
       fireEvent.mouseDown(pointer!, {
@@ -478,14 +399,10 @@ describe('ScreenshotViewer', () => {
       fireEvent.mouseUp(document, { clientX: 1010, clientY: 390 });
     });
 
-    expect(viewerBody!.getAttribute('style')).toContain(
-      'left: 910px; top: 390px; width: 150px; height: 200px',
-    );
+    expect(viewerBody!.getAttribute('style')).toContain('left: 910px; top: 390px; width: 150px; height: 200px');
 
     act(() => {
-      const pointer = container.querySelector(
-        '.screenshot-viewer-pointer-right',
-      );
+      const pointer = container.querySelector('.screenshot-viewer-pointer-right');
 
       // Drag pointer and move it 100px to the right corner of the viewer
       fireEvent.mouseDown(pointer!, {
@@ -497,14 +414,10 @@ describe('ScreenshotViewer', () => {
       fireEvent.mouseUp(document, { clientX: 1010, clientY: 440 });
     });
 
-    expect(viewerBody!.getAttribute('style')).toContain(
-      'left: 910px; top: 390px; width: 200px; height: 200px',
-    );
+    expect(viewerBody!.getAttribute('style')).toContain('left: 910px; top: 390px; width: 200px; height: 200px');
 
     act(() => {
-      const pointer = container.querySelector(
-        '.screenshot-viewer-pointer-right-bottom',
-      );
+      const pointer = container.querySelector('.screenshot-viewer-pointer-right-bottom');
 
       // Drag pointer and move it 100px to the right bottom corner of the viewer
       fireEvent.mouseDown(pointer!, {
@@ -516,14 +429,10 @@ describe('ScreenshotViewer', () => {
       fireEvent.mouseUp(document, { clientX: 1010, clientY: 490 });
     });
 
-    expect(viewerBody!.getAttribute('style')).toContain(
-      'left: 910px; top: 390px; width: 250px; height: 250px;',
-    );
+    expect(viewerBody!.getAttribute('style')).toContain('left: 910px; top: 390px; width: 250px; height: 250px;');
 
     act(() => {
-      const pointer = container.querySelector(
-        '.screenshot-viewer-pointer-bottom',
-      );
+      const pointer = container.querySelector('.screenshot-viewer-pointer-bottom');
 
       // Drag pointer and move it 100px to the bottom corner of the viewer
       fireEvent.mouseDown(pointer!, {
@@ -535,14 +444,10 @@ describe('ScreenshotViewer', () => {
       fireEvent.mouseUp(document, { clientX: 960, clientY: 490 });
     });
 
-    expect(viewerBody!.getAttribute('style')).toContain(
-      'left: 910px; top: 390px; width: 250px; height: 300px;',
-    );
+    expect(viewerBody!.getAttribute('style')).toContain('left: 910px; top: 390px; width: 250px; height: 300px;');
 
     act(() => {
-      const pointer = container.querySelector(
-        '.screenshot-viewer-pointer-bottom-left',
-      );
+      const pointer = container.querySelector('.screenshot-viewer-pointer-bottom-left');
 
       // Drag pointer and move it 100px to the bottom left corner of the viewer
       fireEvent.mouseDown(pointer!, {
@@ -554,14 +459,10 @@ describe('ScreenshotViewer', () => {
       fireEvent.mouseUp(document, { clientX: 910, clientY: 490 });
     });
 
-    expect(viewerBody!.getAttribute('style')).toContain(
-      'left: 860px; top: 390px; width: 300px; height: 350px',
-    );
+    expect(viewerBody!.getAttribute('style')).toContain('left: 860px; top: 390px; width: 300px; height: 350px');
 
     act(() => {
-      const pointer = container.querySelector(
-        '.screenshot-viewer-pointer-left',
-      );
+      const pointer = container.querySelector('.screenshot-viewer-pointer-left');
 
       // Drag pointer and move it 100px to the left corner of the viewer
       fireEvent.mouseDown(pointer!, {
@@ -573,14 +474,10 @@ describe('ScreenshotViewer', () => {
       fireEvent.mouseUp(document, { clientX: 910, clientY: 440 });
     });
 
-    expect(viewerBody!.getAttribute('style')).toContain(
-      'left: 810px; top: 390px; width: 350px; height: 350px',
-    );
+    expect(viewerBody!.getAttribute('style')).toContain('left: 810px; top: 390px; width: 350px; height: 350px');
 
     act(() => {
-      const pointer = container.querySelector(
-        '.screenshot-viewer-pointer-left-top',
-      );
+      const pointer = container.querySelector('.screenshot-viewer-pointer-left-top');
 
       // Drag pointer and move it 100px to the left top corner of the viewer
       fireEvent.mouseDown(pointer!, {
@@ -592,9 +489,7 @@ describe('ScreenshotViewer', () => {
       fireEvent.mouseUp(document, { clientX: 910, clientY: 390 });
     });
 
-    expect(viewerBody!.getAttribute('style')).toContain(
-      'left: 760px; top: 340px; width: 400px; height: 400px',
-    );
+    expect(viewerBody!.getAttribute('style')).toContain('left: 760px; top: 340px; width: 400px; height: 400px');
     //#endregion
   });
 
@@ -606,82 +501,156 @@ describe('ScreenshotViewer', () => {
 
   it('Resize the viewer to the outside of the screen by dragging the pointer of the border', () => {});
 
-  it.only('drawing a ellipse', async () => {
-    const { container, getByTitle } = render(
-      <Screenshot
-        image={SUCCESS_IMAGE.src}
-        width={SUCCESS_IMAGE.width}
-        height={SUCCESS_IMAGE.height}
-      />,
-    );
+  describe('Ellipse', () => {
+    let strokeSpy: jest.SpyInstance<void, any>;
+    let isPointInStrokeSpy: jest.SpyInstance<boolean, any>;
 
-    const canvas = container.querySelector('.screenshot-canvas');
-    const viewer = container.querySelector('.screenshot-viewer');
-    const viewerBorder = container.querySelector('.screenshot-viewer-border');
-    const viewerBar = container.querySelector('.screenshot-viewer-bar');
-    const viewerBody = container.querySelector('.screenshot-viewer-body');
-
-    await waitForRenderReady();
-
-    act(() => {
-      fireEvent.mouseMove(document, { clientX: 0, clientY: 0 });
-      fireEvent.mouseDown(canvas!, {
-        button: 0,
-        clientX: 100,
-        clientY: 100,
-      });
-      fireEvent.mouseMove(document, { clientX: 150, clientY: 150 });
-      fireEvent.mouseUp(document, { clientX: 200, clientY: 200 });
+    beforeEach(() => {
+      strokeSpy = jest.spyOn(global.CanvasRenderingContext2D.prototype, 'stroke');
+      isPointInStrokeSpy = jest.spyOn(global.CanvasRenderingContext2D.prototype, 'isPointInStroke');
     });
 
-    expect(viewer!.getAttribute('style')).toBe('display: block;');
+    it.only('drawing a ellipse', async () => {
+      const { container, getByTitle } = render(
+        <Screenshot image={SUCCESS_IMAGE.src} width={SUCCESS_IMAGE.width} height={SUCCESS_IMAGE.height} />,
+      );
 
-    const barButton = getByTitle('圓形');
+      const canvas = container.querySelector('.screenshot-canvas');
+      const viewer = container.querySelector('.screenshot-viewer');
+      const viewerBorder = container.querySelector('.screenshot-viewer-border');
+      const viewerBody = container.querySelector('.screenshot-viewer-body');
 
-    barButton.click();
+      await waitForRenderReady();
 
-    expect(
-      barButton.classList.contains('screenshot-viewer-bar-button-active'),
-    ).toBe(true);
-
-    // jest.spyOn(global.CanvasRenderingContext2D.prototype, 'isPointInStroke')
-
-    const ellipseDrawSpy = jest.spyOn(Ellipse.prototype, 'draw');
-    const ellipseMousedownSpy = jest.spyOn(Ellipse.prototype, 'mousedown');
-
-    getBoundingClientRectSpy.mockReturnValue({
-      left: 100,
-      top: 100,
-      width: 100,
-      height: 100,
-    } as DOMRect);
-
-    expect(getBoundingClientRectSpy).toBeCalledTimes(0);
-
-    act(() => {
-      fireEvent.mouseDown(viewerBorder!, {
-        clientX: 120,
-        clientY: 120,
+      act(() => {
+        fireEvent.mouseMove(document, { clientX: 0, clientY: 0 });
+        fireEvent.mouseDown(canvas!, {
+          button: 0,
+          clientX: 100,
+          clientY: 100,
+        });
+        fireEvent.mouseMove(document, { clientX: 150, clientY: 150 });
+        fireEvent.mouseUp(document, { clientX: 200, clientY: 200 });
       });
-    });
 
-    expect(ellipseMousedownSpy).toBeCalledTimes(1);
-    expect(getBoundingClientRectSpy).toBeCalledTimes(2);
+      expect(viewer!.getAttribute('style')).toBe('display: block;');
 
-    act(() => {
-      fireEvent.mouseMove(document, {
-        clientX: 140,
-        clientY: 140,
+      const barButton = getByTitle('圓形');
+
+      act(() => {
+        barButton.click();
       });
-    });
 
-    expect(ellipseDrawSpy).toBeCalledTimes(1);
-    expect(getBoundingClientRectSpy).toBeCalledTimes(4);
+      expect(barButton.classList.contains('screenshot-viewer-bar-button-active')).toBe(true);
 
-    act(() => {
+      const ellipseDrawSpy = jest.spyOn(Ellipse.prototype, 'draw');
+      const ellipseMousedownSpy = jest.spyOn(Ellipse.prototype, 'mousedown');
+
+      getBoundingClientRectSpy.mockReturnValue({
+        left: 100,
+        top: 100,
+        width: 100,
+        height: 100,
+      } as DOMRect);
+
+      act(() => {
+        fireEvent.mouseDown(viewerBorder!, {
+          clientX: 120,
+          clientY: 120,
+        });
+      });
+
+      expect(ellipseMousedownSpy).toBeCalledTimes(1);
+      expect(getBoundingClientRectSpy).toBeCalledTimes(2);
+
+      act(() => {
+        // Mouse over the upper left corner of the viewerBorder
+        fireEvent.mouseMove(document, {
+          clientX: 80,
+          clientY: 80,
+        });
+      });
+
+      act(() => {
+        // Mouse over the bottom right corner of the viewerBorder
+        fireEvent.mouseMove(document, {
+          clientX: 220,
+          clientY: 220,
+        });
+      });
+
+      act(() => {
+        fireEvent.mouseMove(document, {
+          clientX: 140,
+          clientY: 140,
+        });
+      });
+
+      expect(ellipseDrawSpy).toBeCalledTimes(3);
+      expect(strokeSpy).toBeCalledTimes(3);
+
       fireEvent.mouseUp(document);
-    });
 
-    viewerBody?.scrollWidth; //?
+      //#region should change viewerBorder cursor style to "grab" when the mouse is over the document
+      act(() => {
+        isPointInStrokeSpy.mockReturnValueOnce(true);
+
+        // Move over the boundary of the ellipse
+        fireEvent.mouseMove(document, {
+          clientX: 100,
+          clientY: 100,
+        });
+      });
+
+      expect(isPointInStrokeSpy).toHaveBeenLastCalledWith(expect.any(Path2D), 0, 0);
+      expect(viewerBorder?.getAttribute('style')).toBe('cursor: grab;');
+      //#endregion
+
+      //#region should render editPointers when dragging the ellipse
+      act(() => {
+        isPointInStrokeSpy.mockReturnValueOnce(true);
+
+        fireEvent.mouseDown(viewerBorder!, {
+          clientX: 100,
+          clientY: 100,
+        });
+      });
+
+      const editPointers = viewerBody!.querySelectorAll('.screenshot-viewer-edit-pointer');
+
+      expect(editPointers[0].getAttribute('style')).toContain('translate(27px, 17px)');
+      expect(editPointers[1].getAttribute('style')).toContain('translate(17px, 27px)');
+      expect(editPointers[2].getAttribute('style')).toContain('translate(37px, 27px)');
+      expect(editPointers[3].getAttribute('style')).toContain('translate(27px, 37px)');
+      expect(editPointers[4].getAttribute('style')).toContain('translate(19.928932188134524px, 19.928932188134524px)');
+      expect(editPointers[5].getAttribute('style')).toContain('translate(34.071067811865476px, 19.928932188134524px)');
+      expect(editPointers[6].getAttribute('style')).toContain('translate(19.928932188134524px, 34.071067811865476px)');
+      expect(editPointers[7].getAttribute('style')).toContain('translate(34.071067811865476px, 34.071067811865476px)');
+
+      act(() => {
+        isPointInStrokeSpy.mockReturnValueOnce(true);
+
+        fireEvent.mouseMove(document, {
+          clientX: 120,
+          clientY: 120,
+        });
+      });
+
+      expect(editPointers[0].getAttribute('style')).toContain('translate(47px, 37px)');
+      expect(editPointers[1].getAttribute('style')).toContain('translate(37px, 47px)');
+      expect(editPointers[2].getAttribute('style')).toContain('translate(57px, 47px)');
+      expect(editPointers[3].getAttribute('style')).toContain('translate(47px, 57px)');
+      expect(editPointers[4].getAttribute('style')).toContain('translate(39.928932188134524px, 39.928932188134524px)');
+      expect(editPointers[5].getAttribute('style')).toContain('translate(54.071067811865476px, 39.928932188134524px)');
+      expect(editPointers[6].getAttribute('style')).toContain('translate(39.928932188134524px, 54.071067811865476px)');
+      expect(editPointers[7].getAttribute('style')).toContain('translate(54.071067811865476px, 54.071067811865476px)');
+
+      fireEvent.mouseUp(document);
+      //#endregion
+
+      //#region should change ellipse size when resizing the ellipse
+      act(() => {});
+      //#endregion
+    });
   });
 });
